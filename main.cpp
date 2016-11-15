@@ -93,8 +93,21 @@ pNode inorderNext(const pNode & root, const pNode & curr) {
             next = next->left;
     }
     else {
-        
+        pNode parent = getParent(root, curr);
+        if (parent != nullptr) {
+            if (parent->left == curr)
+                next = parent;
+            else {
+                pNode grandparent = getParent(root, parent);
+                while (grandparent != nullptr && parent == grandparent->right) {
+                    parent = grandparent;
+                    grandparent = getParent(root, parent);
+                }
+                next = grandparent;
+            }
+        }
     }
+    return next;
 }
 
 
@@ -110,6 +123,15 @@ int main() {
     printTree(root);
     std::cout << std::endl;
     printBFS(root);
+    std::cout << "Iterative:\n";
+    pNode leftmost = root;
+    while (leftmost->left != nullptr)
+        leftmost = leftmost->left;
+    while (leftmost != nullptr) {
+        std::cout << leftmost->val << " ";
+        leftmost = inorderNext(root, leftmost);
+    }
+    std::cout << std::endl;
 
     solution soln;
     soln.recover(root);
