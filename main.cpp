@@ -65,6 +65,39 @@ void printBFS(const pNode & root) {
     }
 }
 
+pNode getParent(const pNode & root, const pNode & node) {
+    if (root != nullptr) {
+        std::queue<pNode> qu;
+        qu.push(root);
+        while (!qu.empty()) {
+            auto curr = qu.front();
+            qu.pop();
+            if (curr != nullptr) {
+                if (curr->left == node || curr->right == node)
+                    return curr;
+                else {
+                    qu.push(curr->left);
+                    qu.push(curr->right);
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+pNode inorderNext(const pNode & root, const pNode & curr) {
+    pNode next = nullptr;
+    if (curr->right != nullptr) {
+        next = curr->right;
+        while (next->left != nullptr)
+            next = next->left;
+    }
+    else {
+        
+    }
+}
+
+
 int main() {
     std::vector<int> nums{1,2,3,4,5,6,7};
     srand(time(0));
@@ -80,8 +113,8 @@ int main() {
 
     solution soln;
     soln.recover(root);
-    std::cout << "After recovering:\n";
-    printTree(root);
-    std::cout << std::endl;
-    printBFS(root);
+    // std::cout << "After recovering:\n";
+    // printTree(root);
+    // std::cout << std::endl;
+    // printBFS(root);
 }
