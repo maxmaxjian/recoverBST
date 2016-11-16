@@ -21,13 +21,6 @@ struct TreeNode {
 
 using pNode = std::shared_ptr<TreeNode>;
 
-class solution {
-  public:
-    void recover(const pNode & root) {
-        
-    }
-};
-
 pNode buildTree(const std::vector<int> & nums) {
     pNode root = nullptr;
     if (nums.empty())
@@ -110,33 +103,78 @@ pNode inorderNext(const pNode & root, const pNode & curr) {
     return next;
 }
 
+class solution {
+  public:
+    void recover(const pNode & root) {
+      pNode leftmost = root;
+      while (leftmost->left != nullptr)
+	leftmost = leftmost->left;
+      pNode first = nullptr, second = nullptr, curr, next;
+      curr = leftmost;
+      next = inorderNext(root, curr);
+      while (curr != nullptr && next != nullptr && curr->val < next->val) {
+	curr = next;
+	next = inorderNext(root, curr);
+      }
+      if (curr != nullptr && next == nullptr)
+	return;
+      auto temp = inorderNext(root, next);
+      if (temp == nullptr) {
+	first = curr;
+	second = next;
+      }
+      else {
+	if (curr->val < temp->val) {
+	  first = curr;
+	  second = next;
+	}
+	else {
+	  first = curr;
+	  curr = next;
+	  next = inorderNext(root, curr);
+	  while (curr != nullptr && next != nullptr && curr->val < next->val) {
+	    curr = next;
+	    next = inorderNext(root, curr);
+	  }
+	  second = next;
+	}
+      }
+      std::cout << "first = " << first->val << ", second = " << second->val << std::endl;
+      std::swap(first->val, second->val);
+    }
+};
+
 
 int main() {
-    std::vector<int> nums{1,2,3,4,5,6,7};
+  std::vector<int> nums{1,2,3,4,5,6,7,8};
     srand(time(0));
     size_t ix1 = rand()%nums.size(), ix2 = rand()%nums.size();
-    std::swap(nums[ix1], nums[ix2]);
+    while (ix1 == ix2) {
+      ix1 = rand()%nums.size();
+      ix2 = rand()%nums.size();
+    }
+      std::swap(nums[ix1], nums[ix2]);
 
     pNode root = buildTree(nums);
 
     std::cout << "Before recovering:\n";
     printTree(root);
     std::cout << std::endl;
-    printBFS(root);
-    std::cout << "Iterative:\n";
-    pNode leftmost = root;
-    while (leftmost->left != nullptr)
-        leftmost = leftmost->left;
-    while (leftmost != nullptr) {
-        std::cout << leftmost->val << " ";
-        leftmost = inorderNext(root, leftmost);
-    }
-    std::cout << std::endl;
+    // printBFS(root);
+    // std::cout << "Iterative:\n";
+    // pNode leftmost = root;
+    // while (leftmost->left != nullptr)
+    //     leftmost = leftmost->left;
+    // while (leftmost != nullptr) {
+    //     std::cout << leftmost->val << " ";
+    //     leftmost = inorderNext(root, leftmost);
+    // }
+    // std::cout << std::endl;
 
     solution soln;
     soln.recover(root);
-    // std::cout << "After recovering:\n";
-    // printTree(root);
-    // std::cout << std::endl;
+    std::cout << "After recovering:\n";
+    printTree(root);
+    std::cout << std::endl;
     // printBFS(root);
 }
